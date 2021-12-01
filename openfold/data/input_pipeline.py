@@ -140,6 +140,7 @@ def ensembled_transform_fns(common_cfg, mode_cfg, ensemble_seed):
                 common_cfg.max_extra_msa,
                 mode_cfg.crop_size,
                 mode_cfg.max_templates,
+                mode_cfg.center_crops,
             )
         )
     else:

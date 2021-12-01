@@ -452,8 +452,10 @@ def load_stereo_chemical_props() -> Tuple[
       residue_bond_angles: dict that maps resname --> list of BondAngle tuples
     """
     # TODO: this file should be downloaded in a setup script
+    from pathlib import Path
+    root = Path(__file__).parent.parent.parent
     stereo_chemical_props_path = "openfold/resources/stereo_chemical_props.txt"
-    with open(stereo_chemical_props_path, "rt") as f:
+    with (root / stereo_chemical_props_path).open("rt") as f:
         stereo_chemical_props = f.read()
     lines_iter = iter(stereo_chemical_props.splitlines())
     # Load bond lengths.

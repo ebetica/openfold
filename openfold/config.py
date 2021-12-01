@@ -194,6 +194,7 @@ config = mlc.ConfigDict(
                 "crop_size": None,
                 "supervised": False,
                 "subsample_recycling": False,
+                "center_crops": False,
             },
             "eval": {
                 "fixed_size": True,
@@ -206,6 +207,7 @@ config = mlc.ConfigDict(
                 "crop_size": None,
                 "supervised": True,
                 "subsample_recycling": False,
+                "center_crops": False,
             },
             "train": {
                 "fixed_size": True,
@@ -221,6 +223,7 @@ config = mlc.ConfigDict(
                 "clamp_prob": 0.9,
                 "subsample_recycling": True,
                 "max_distillation_msa_clusters": 1000,
+                "center_crops": False,
             },
             "data_module": {
                 "use_small_bfd": False,

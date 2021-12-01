@@ -464,6 +464,7 @@ def make_fixed_size(
     extra_msa_size,
     num_res=0,
     num_templates=0,
+    center_crops=False,
 ):
     """Guess at the MSA and sequence dimension to make fixed size."""
     pad_size_map = {
@@ -485,7 +486,11 @@ def make_fixed_size(
             pad_size_map.get(s2, None) or s1 for (s1, s2) in zip(shape, schema)
         ]
 
-        padding = [(0, p - v.shape[i]) for i, p in enumerate(pad_size)]
+        if center_crops:
+            to_pad = [p - v.shape[i] for i, p in enumerate(pad_size)]
+            padding = [(tp  // 2, tp  - tp  // 2) for tp in to_pad]
+        else:
+            padding = [(0, p - v.shape[i]) for i, p in enumerate(pad_size)]
         padding.reverse()
         padding = list(itertools.chain(*padding))
         if padding:
