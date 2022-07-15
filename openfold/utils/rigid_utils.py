@@ -79,7 +79,14 @@ def rot_matmul(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
         dim=-1,
     )
 
-    return torch.stack([row_1, row_2, row_3], dim=-2)
+    return torch.stack(
+        [
+            row_mul(0), 
+            row_mul(1), 
+            row_mul(2),
+        ], 
+        dim=-2
+    )
 
 
 def rot_vec_mul(r: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
@@ -1276,8 +1283,8 @@ class Rigid:
         c2_rots[..., 0, 0] = cos_c2
         c2_rots[..., 0, 2] = sin_c2
         c2_rots[..., 1, 1] = 1
-        c1_rots[..., 2, 0] = -1 * sin_c2
-        c1_rots[..., 2, 2] = cos_c2
+        c2_rots[..., 2, 0] = -1 * sin_c2
+        c2_rots[..., 2, 2] = cos_c2
 
         c_rots = rot_matmul(c2_rots, c1_rots)
         n_xyz = rot_vec_mul(c_rots, n_xyz)
