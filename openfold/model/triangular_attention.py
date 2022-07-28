@@ -65,6 +65,7 @@ class TriangleAttention(nn.Module):
         use_memory_efficient_kernel: bool = False,
         use_lma: bool = False,
         inplace_safe: bool = False,
+        **extra_kwargs,
     ) -> torch.Tensor:
         "triangle! triangle!"
         mha_inputs = {
@@ -77,7 +78,8 @@ class TriangleAttention(nn.Module):
             partial(
                 self.mha, 
                 use_memory_efficient_kernel=use_memory_efficient_kernel,
-                use_lma=use_lma
+                use_lma=use_lma,
+                **extra_kwargs,
             ),
             mha_inputs,
             chunk_size=chunk_size,
@@ -92,6 +94,7 @@ class TriangleAttention(nn.Module):
         use_memory_efficient_kernel: bool = False,
         use_lma: bool = False,
         inplace_safe: bool = False,
+        **extra_kwargs
     ) -> torch.Tensor:
         """
         Args:
@@ -132,6 +135,7 @@ class TriangleAttention(nn.Module):
                 use_memory_efficient_kernel=use_memory_efficient_kernel,
                 use_lma=use_lma,
                 inplace_safe=inplace_safe,
+                **extra_kwargs
             )
         else:
             x = self.mha(
@@ -139,7 +143,8 @@ class TriangleAttention(nn.Module):
                 kv_x=x, 
                 biases=biases, 
                 use_memory_efficient_kernel=use_memory_efficient_kernel,
-                use_lma=use_lma
+                use_lma=use_lma,
+                **extra_kwargs
             )
 
         if(not self.starting):
