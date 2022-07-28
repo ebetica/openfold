@@ -613,6 +613,7 @@ class StructureModule(nn.Module):
             self.no_angles,
             self.epsilon,
         )
+        self._init_residue_constants(self.linear_in.weight.dtype, self.linear_in.weight.device)
 
     def forward(
         self,
@@ -784,16 +785,11 @@ class StructureModule(nn.Module):
             )
 
     def torsion_angles_to_frames(self, r, alpha, f):
-        # Lazily initialize the residue constants on the correct device
-        self._init_residue_constants(alpha.dtype, alpha.device)
-        # Separated purely to make testing less annoying
         return torsion_angles_to_frames(r, alpha, f, self.default_frames)
 
     def frames_and_literature_positions_to_atom14_pos(
         self, r, f  # [*, N, 8]  # [*, N]
     ):
-        # Lazily initialize the residue constants on the correct device
-        self._init_residue_constants(r.get_rots().dtype, r.get_rots().device)
         return frames_and_literature_positions_to_atom14_pos(
             r,
             f,
