@@ -573,12 +573,6 @@ class StructureModule(nn.Module):
         self.epsilon = epsilon
         self.inf = inf
 
-        # Buffers to be lazily initialized later
-        # self.default_frames
-        # self.group_idx
-        # self.atom_mask
-        # self.lit_positions
-
         self.layer_norm_s = LayerNorm(self.c_s)
         self.layer_norm_z = LayerNorm(self.c_z)
 
@@ -613,7 +607,6 @@ class StructureModule(nn.Module):
             self.no_angles,
             self.epsilon,
         )
-        self._init_residue_constants(self.linear_in.weight.dtype, self.linear_in.weight.device)
 
     def forward(
         self,
@@ -753,6 +746,7 @@ class StructureModule(nn.Module):
                     device=device,
                     requires_grad=False,
                 ),
+                persistent=False,
             )
         if not hasattr(self, "group_idx"):
             self.register_buffer(
@@ -762,6 +756,7 @@ class StructureModule(nn.Module):
                     device=device,
                     requires_grad=False,
                 ),
+                persistent=False,
             )
         if not hasattr(self, "atom_mask"):
             self.register_buffer(
@@ -772,6 +767,7 @@ class StructureModule(nn.Module):
                     device=device,
                     requires_grad=False,
                 ),
+                persistent=False,
             )
         if not hasattr(self, "lit_positions"):
             self.register_buffer(
@@ -782,14 +778,20 @@ class StructureModule(nn.Module):
                     device=device,
                     requires_grad=False,
                 ),
+                persistent=False,
             )
 
     def torsion_angles_to_frames(self, r, alpha, f):
+        # Lazily initialize the residue constants on the correct device
+        self._init_residue_constants(alpha.dtype, alpha.device)
+        # Separated purely to make testing less annoying
         return torsion_angles_to_frames(r, alpha, f, self.default_frames)
 
     def frames_and_literature_positions_to_atom14_pos(
         self, r, f  # [*, N, 8]  # [*, N]
     ):
+        # Lazily initialize the residue constants on the correct device
+        self._init_residue_constants(r.get_rots().dtype, r.get_rots().device)
         return frames_and_literature_positions_to_atom14_pos(
             r,
             f,
