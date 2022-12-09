@@ -56,7 +56,8 @@ class TriangleMultiplicativeUpdate(nn.Module):
     def _combine_projections(self,
         a: torch.Tensor,
         b: torch.Tensor,
-        _inplace_chunk_size: Optional[int] = None
+        _inplace_chunk_size: Optional[int] = None,
+        normalize_inputs: bool = False,
     ) -> torch.Tensor:
         if(self._outgoing):
             a = permute_final_dims(a, (2, 0, 1))
@@ -64,6 +65,10 @@ class TriangleMultiplicativeUpdate(nn.Module):
         else:
             a = permute_final_dims(a, (2, 1, 0))
             b = permute_final_dims(b,  (2, 0, 1))
+
+        if normalize_inputs:
+            a = a / a.std()
+            b = b / b.std()
 
         if(_inplace_chunk_size is not None):
             # To be replaced by torch vmap
@@ -391,7 +396,7 @@ class TriangleMultiplicativeUpdate(nn.Module):
         b = mask
         b = b * self.sigmoid(self.linear_b_g(z))
         b = b * self.linear_b_p(z)
-        x = self._combine_projections(a, b)
+        x = self._combine_projections(a, b, normalize_inputs=True)
         del a, b
         x = self.layer_norm_out(x)
         x = self.linear_z(x)
